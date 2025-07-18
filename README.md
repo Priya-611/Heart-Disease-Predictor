@@ -53,7 +53,8 @@ The main objective of this project is to demonstrate how machine learning models
 ## Project Structure
 
 heart-disease-predictor/
-├── Heart Disease/ # Saved model and encoders
+
+├── Heart Disease/ `Saved model and encoders`
 
 │ ├── heart.csv `Dataset`
 
