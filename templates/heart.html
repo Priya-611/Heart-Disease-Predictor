@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Heart Disease Prediction</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+          font-family: 'Roboto', Arial, sans-serif;
+          background: #f7f9fb;
+          color: #333;
+          margin: 0;
+          line-height: 1.6;
+        }
+
+        .navbar {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #004080;
+          color: #fff;
+          padding: 0 32px;
+          height: 64px;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          z-index: 1000;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .navbar-hamburger {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          cursor: pointer;
+          margin-right: 18px;
+          margin-left: 0;
+        }
+        .navbar-hamburger span {
+          width: 26px;
+          height: 3px;
+          background: #fff;
+          margin: 4px 0;
+          border-radius: 2px;
+          transition: all 0.3s;
+        }
+        .navbar-logo {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0 auto;
+        }
+        .navbar-logo img {
+          height: 40px;
+          margin-right: 14px;
+        }
+        .navbar-title {
+          font-size: 2.1rem;
+          font-weight: 900;
+          letter-spacing: 0.5px;
+          display: flex;
+          align-items: center;
+        }
+        .navbar-links {
+          display: flex;
+          gap: 28px;
+        }
+        .navbar-link {
+          color: #fff;
+          text-decoration: none;
+          font-size: 1.05rem;
+          font-weight: 500;
+          padding: 8px 0;
+          border-bottom: 2px solid transparent;
+          transition: border 0.2s, color 0.2s;
+        }
+        .navbar-link:hover, .navbar-link.active {
+          color: #ffd700;
+          border-bottom: 2px solid #ffd700;
+        }
+        @media (max-width: 900px) {
+          .navbar-links {
+            display: none;
+            position: absolute;
+            top: 64px;
+            left: 0;
+            width: 100%;
+            background: #004080;
+            flex-direction: column;
+            gap: 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+          }
+          .navbar-links.open {
+            display: flex;
+          }
+        }
+        .main-content {
+          margin-top: 80px;
+        }
+
+        header {
+          background: #004080;
+          color: #fff;
+          padding: 20px 0;
+          text-align: center;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header-title {
+          font-size: 2rem;
+          font-weight: 700;
+          letter-spacing: 0.5px;
+        }
+
+        h2, h3 {
+          color: #004080;
+          margin-top: 0;
+          font-weight: 700;
+        }
+
+        .about-heart, .heart-tips, .container, .how-it-works, .top-cardiologists, .about, .contact {
+          max-width: 900px;
+          margin: 40px auto;
+          background: #fff;
+          padding: 40px;
+          border-radius: 6px;
+          box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+        }
+
+        .tip-item {
+          margin-top: 24px;
+          padding: 18px 22px;
+          border-left: 4px solid #004080;
+          background: #f2f4f7;
+        }
+
+        button {
+          background: #004080;
+          color: #fff;
+          border: none;
+          padding: 14px 24px;
+          font-size: 1.1rem;
+          border-radius: 4px;
+          cursor: pointer;
+          transition: background 0.2s;
+        }
+        button:hover {
+          background: #003060;
+        }
+
+        label {
+          font-weight: 600;
+          margin-bottom: 6px;
+        }
+
+        input, select {
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          padding: 10px;
+          font-size: 1rem;
+          width: 100%;
+        }
+
+        input:focus, select:focus {
+          border-color: #004080;
+          outline: none;
+        }
+
+        .result-card {
+          margin: 48px auto 0 auto;
+          padding: 56px 36px 48px 36px;
+          max-width: 600px;
+          border-radius: 22px;
+          background: linear-gradient(120deg, #f8fbff 0%, #e3f0ff 100%);
+          box-shadow: 0 8px 36px rgba(26,35,126,0.13), 0 2px 12px rgba(0,0,0,0.07);
+          text-align: center;
+          font-size: 1.32rem;
+          color: #1a237e;
+          border: 1.5px solid #e5e7eb;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          position: relative;
+        }
+        .result-card-heading {
+          font-size: 1.7rem;
+          font-weight: 900;
+          margin-bottom: 22px;
+          color: #1a237e;
+          letter-spacing: 0.5px;
+        }
+        .result-card-message {
+          font-size: 1.28rem;
+          font-weight: 700;
+          margin-top: 24px;
+          color: #2336a3;
+          letter-spacing: 0.01em;
+        }
+        .icon.happy-heart, .icon.sad-heart {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0 auto 18px auto;
+          font-size: 4.2rem;
+          border-radius: 50%;
+          width: 110px;
+          height: 110px;
+          box-shadow: 0 4px 18px rgba(0,0,0,0.10);
+          background: #f9fafb;
+          border: 2.5px solid #e5e7eb;
+        }
+        .icon.happy-heart {
+          color: #00b894;
+          background: #e6fff5;
+          border-color: #00b89433;
+        }
+        .icon.sad-heart {
+          color: #e11d48;
+          background: #ffe6ec;
+          border-color: #e11d4833;
+        }
+        .footer {
+          background: #003060;
+          color: #fff;
+          text-align: center;
+          padding: 20px 10px;
+          margin-top: auto;
+          font-size: 0.9rem;
+        }
+        .footer a {
+          color: #ffd700;
+          margin: 0 8px;
+          font-size: 1.2rem;
+        }
+        html {
+          scroll-behavior: smooth;
+        }
+        
+        /* Add scroll margin to sections for navbar offset */
+        #about-heart, #predictForm, #howitworks, #top-cardiologists, #about, #contact {
+          scroll-margin-top: 90px;
+        }
+        /* Side Menu Styles */
+        .side-menu {
+          position: fixed;
+          top: 0;
+          left: -260px;
+          width: 240px;
+          height: 100vh;
+          background: #004080;
+          color: #fff;
+          box-shadow: 2px 0 12px rgba(0,0,0,0.08);
+          z-index: 2001;
+          display: flex;
+          flex-direction: column;
+          padding-top: 80px;
+          transition: left 0.3s cubic-bezier(.4,0,.2,1);
+        }
+        .side-menu.open {
+          left: 0;
+        }
+        .side-menu-link {
+          color: #fff;
+          text-decoration: none;
+          font-size: 1.1rem;
+          padding: 18px 32px;
+          border-bottom: 1px solid rgba(255,255,255,0.08);
+          transition: background 0.2s, color 0.2s;
+        }
+        .side-menu-link:hover, .side-menu-link.active {
+          background: #003060;
+          color: #ffd700;
+        }
+        .side-menu-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          background: rgba(0,0,0,0.25);
+          z-index: 2000;
+          display: none;
+        }
+        .side-menu-overlay.open {
+          display: block;
+        }
+        .about-heart {
+          max-width: 900px;
+          margin: 48px auto 40px auto;
+          background: #fff;
+          padding: 48px 40px 40px 40px;
+          border-radius: 14px;
+          box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+          border: 1.5px solid #e5e7eb;
+          position: relative;
+          animation: fadeIn 1.2s cubic-bezier(.4,0,.2,1);
+        }
+        .about-heart-content {
+          background: #f6f8fa;
+          border-radius: 10px;
+          padding: 32px 32px 24px 32px;
+          margin-top: 10px;
+          box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+          font-size: 1.18rem;
+          color: #222b45;
+          line-height: 1.7;
+          letter-spacing: 0.01em;
+          display: flex;
+          flex-direction: column;
+          gap: 18px;
+        }
+        .about-heart h2 {
+          font-size: 2.3rem !important;
+          font-weight: 800;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 18px;
+          background: none;
+          border-radius: 0;
+          padding: 0 0 18px 0;
+          margin-bottom: 24px;
+          color: #1a237e;
+          box-shadow: none;
+          line-height: 1.1;
+          position: relative;
+        }
+        .about-heart h2 i.fa-heart-pulse {
+          background: #fff;
+          border-radius: 50%;
+          box-shadow: 0 2px 8px rgba(26,35,126,0.10);
+          padding: 8px;
+          font-size: 1.3em;
+          color: #e11d48;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .how-it-works {
+          max-width: 900px;
+          margin: 48px auto 40px auto;
+          background: #fff;
+          padding: 48px 40px 40px 40px;
+          border-radius: 14px;
+          box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+          border: 1.5px solid #e5e7eb;
+          animation: fadeIn 1.2s cubic-bezier(.4,0,.2,1);
+        }
+        .how-it-works h3 {
+          font-size: 2rem;
+          text-align: center;
+          margin-bottom: 28px;
+          color: #1a237e;
+          background: none;
+          border-radius: 0;
+          padding: 0 0 12px 0;
+          box-shadow: none;
+        }
+        .howit-subsection {
+          display: flex;
+          align-items: flex-start;
+          gap: 18px;
+          background: #f9fafb;
+          border-radius: 10px;
+          box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+          padding: 20px 18px;
+          margin-bottom: 18px;
+          border: 1px solid #e5e7eb;
+          transition: box-shadow 0.2s;
+        }
+        .howit-subsection:hover {
+          box-shadow: 0 4px 16px rgba(26,35,126,0.10);
+        }
+        .howit-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #f1f5fb;
+          border-radius: 50%;
+          width: 44px;
+          height: 44px;
+          font-size: 1.4rem;
+          color: #1a237e;
+          box-shadow: 0 1px 4px rgba(26,35,126,0.08);
+          flex-shrink: 0;
+        }
+        .howit-title {
+          font-size: 1.08rem;
+          font-weight: 700;
+          color: #1a237e;
+          margin-bottom: 4px;
+        }
+        .howit-desc {
+          font-size: 1rem;
+          color: #333;
+        }
+        .how-it-works-icon {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          margin-bottom: 14px;
+        }
+        .how-it-works-icon i {
+          font-size: 2.1rem;
+          color: #1a237e;
+          background: #fff;
+          border-radius: 50%;
+          box-shadow: 0 1px 4px rgba(26,35,126,0.08);
+          padding: 10px;
+        }
+
+        .top-cardiologists {
+          max-width: 900px;
+          margin: 48px auto 40px auto;
+          background: #fff;
+          padding: 48px 40px 40px 40px;
+          border-radius: 14px;
+          box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+          border: 1.5px solid #e5e7eb;
+          animation: fadeIn 1.2s cubic-bezier(.4,0,.2,1);
+        }
+        .top-cardiologists h3 {
+          font-size: 2rem;
+          text-align: center;
+          margin-bottom: 28px;
+          color: #1a237e;
+          background: none;
+          border-radius: 0;
+          padding: 0 0 12px 0;
+          box-shadow: none;
+        }
+        .cardiologist-list {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+          gap: 28px;
+          margin-top: 18px;
+        }
+        .cardiologist-card {
+          background: #f9fafb;
+          border-radius: 10px;
+          box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+          padding: 22px 18px 16px 18px;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          border: 1px solid #e5e7eb;
+          position: relative;
+          transition: box-shadow 0.2s, transform 0.2s;
+          min-height: 220px;
+        }
+        .cardiologist-card:hover {
+          box-shadow: 0 4px 16px rgba(26,35,126,0.10);
+          transform: translateY(-2px) scale(1.015);
+        }
+        .cardiologist-icon {
+          position: absolute;
+          top: -22px;
+          left: 14px;
+          background: #1a237e;
+          color: #fff;
+          border-radius: 50%;
+          width: 38px;
+          height: 38px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1.2rem;
+          box-shadow: 0 1px 4px rgba(26,35,126,0.08);
+          border: 2px solid #fff;
+        }
+        .cardiologist-name {
+          font-size: 1.08rem;
+          font-weight: 700;
+          color: #1a237e;
+          margin-bottom: 2px;
+          margin-top: 14px;
+        }
+        .cardiologist-specialty {
+          font-size: 0.98rem;
+          color: #2336a3;
+          font-weight: 600;
+          margin-bottom: 6px;
+        }
+        .cardiologist-desc {
+          font-size: 0.95rem;
+          color: #333;
+          margin-top: 8px;
+        }
+        .container {
+          max-width: 900px;
+          margin: 48px auto 40px auto;
+          background: #fff;
+          padding: 48px 40px 40px 40px;
+          border-radius: 14px;
+          box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+          border: 1.5px solid #e5e7eb;
+          animation: fadeIn 1.2s cubic-bezier(.4,0,.2,1);
+          position: relative;
+        }
+        .container h2 {
+          font-size: 2.1rem;
+          font-weight: 800;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 14px;
+          color: #1a237e;
+          background: none;
+          border-radius: 0;
+          padding: 0 0 18px 0;
+          margin-bottom: 24px;
+          box-shadow: none;
+          line-height: 1.1;
+          position: relative;
+        }
+        .container h2 i.fa-heart-circle-bolt {
+          background: #fff;
+          border-radius: 50%;
+          box-shadow: 0 2px 8px rgba(26,35,126,0.10);
+          padding: 7px;
+          font-size: 1.2em;
+          color: #00b894;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .container form {
+          background: #f9fafb;
+          border-radius: 10px;
+          box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+          padding: 28px 22px 14px 22px;
+          border: 1px solid #e5e7eb;
+          margin-bottom: 18px;
+        }
+        .container .form-group label {
+          color: #1a237e;
+          font-size: 1.05rem;
+          font-weight: 600;
+        }
+        .container input, .container select {
+          border: 1.2px solid #cfd8dc;
+          border-radius: 5px;
+          padding: 11px;
+          font-size: 1.05rem;
+          width: 100%;
+          margin-bottom: 8px;
+          background: #fff;
+          transition: border 0.2s, box-shadow 0.2s;
+        }
+        .container input:focus, .container select:focus {
+          border-color: #1a237e;
+          box-shadow: 0 0 0 2px #1a237e22;
+          outline: none;
+        }
+        .container button[type="submit"] {
+          background: #1a237e;
+          color: #fff;
+          border: none;
+          padding: 15px 30px;
+          font-size: 1.12rem;
+          border-radius: 5px;
+          cursor: pointer;
+          font-weight: 700;
+          margin-top: 10px;
+          box-shadow: 0 2px 8px rgba(26,35,126,0.10);
+          transition: background 0.2s, box-shadow 0.2s;
+        }
+        .container button[type="submit"]:hover {
+          background: #2336a3;
+          box-shadow: 0 4px 16px rgba(26,35,126,0.13);
+        }
+        .about h3, .contact h3 {
+          font-size: 2rem;
+          font-weight: 800;
+          color: #1a237e;
+          margin-bottom: 18px;
+          text-align: center;
+        }
+        .about, .contact {
+          text-align: center;
+        }
+        .about-heart p {
+          font-size: 1.18rem;
+          margin-bottom: 22px;
+          color: #222b45;
+          line-height: 1.7;
+          letter-spacing: 0.01em;
+        }
+        .about-heart ul {
+          list-style: disc inside;
+          padding-left: 0;
+          margin: 18px 0 22px 0;
+          background: #f6f8fa;
+          border-radius: 8px;
+          box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+          padding: 18px 22px 18px 22px;
+          border: 1px solid #e5e7eb;
+        }
+        .about-heart ul li {
+          margin-left: 0;
+          margin-bottom: 14px;
+          font-size: 1.08rem;
+          color: #374151;
+          line-height: 1.6;
+        }
+        .about-heart ul li:last-child {
+          margin-bottom: 0;
+        }
+        /* Input summary styles */
+        .input-summary {
+          max-width: 520px;
+          margin: 32px auto 0 auto;
+          background: #f9fafb;
+          border: 1.5px solid #e5e7eb;
+          border-radius: 14px;
+          box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+          padding: 28px 24px 18px 24px;
+          margin-bottom: 18px;
+        }
+        .input-summary-title {
+          font-size: 1.18rem;
+          font-weight: 700;
+          color: #1a237e;
+          margin-bottom: 18px;
+          text-align: center;
+          letter-spacing: 0.01em;
+        }
+        .input-summary-list {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 12px 28px;
+          list-style: none;
+          padding: 0;
+          margin: 0;
+        }
+        .input-summary-list li {
+          font-size: 1.05rem;
+          color: #374151;
+          background: none;
+          padding: 0;
+          margin: 0;
+          display: flex;
+          align-items: center;
+        }
+        .input-summary-list b {
+          color: #1a237e;
+          font-weight: 700;
+          margin-right: 6px;
+          min-width: 110px;
+          display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+      <div class="navbar-hamburger" id="navbarHamburger" onclick="toggleSideMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <div class="navbar-logo" style="margin: 0 auto; justify-content: center;">
+         <span class="navbar-title"><i class="fa-solid fa-heart-pulse" style="color:#e11d48; font-size:1.3em; margin-right:12px;"></i>Heart Disease Prediction</span>
+      </div>
+      <!-- Removed navbar-links from here -->
+    </nav>
+    <!-- Side Menu -->
+    <div class="side-menu" id="sideMenu">
+      <a href="#about-heart" class="side-menu-link">About</a>
+      <a href="#predictForm" class="side-menu-link">Prediction</a>
+      <a href="#howitworks" class="side-menu-link">How It Works</a>
+      <a href="#top-cardiologists" class="side-menu-link">Top Cardiologists</a>
+      <a href="#about" class="side-menu-link">About Us</a>
+      <a href="#contact" class="side-menu-link">Contact Us</a>
+    </div>
+    <div class="side-menu-overlay" id="sideMenuOverlay" onclick="closeSideMenu()"></div>
+    <div class="main-content">
+    <!-- Heart Health Importance Section -->
+    <div class="about-heart" id="about-heart">
+      <h2 style="font-size:2.3rem; font-weight:800; text-align:center; color:#1a237e; margin-bottom:24px;">Why Heart Health Matters in Today's Generation</h2>
+      <div class="about-heart-content">
+        <p><b>Heart disease is the leading cause of death worldwide</b>, responsible for nearly <b>one in every three deaths</b> globally. In India, heart disease accounts for over <b>28% of all deaths</b>, and the average age of onset is now a decade younger than in Western countries. This means people in their 30s and 40s are increasingly at risk.</p>
+        <p><b>Why is this happening?</b> Modern lifestyles have introduced a perfect storm of risk factors:</p>
+        <ul>
+          <li><b>High stress levels:</b> Fast-paced work, academic pressure, and social expectations raise stress hormones, which can damage blood vessels over time.</li>
+          <li><b>Sedentary routines:</b> Desk jobs, long commutes, and screen time mean less physical activity, weakening the heart and increasing obesity risk.</li>
+          <li><b>Poor dietary habits:</b> Increased consumption of processed foods, sugary drinks, and unhealthy fats leads to high cholesterol, high blood pressure, and diabetes.</li>
+          <li><b>Environmental factors:</b> Air pollution and lack of green spaces can also contribute to cardiovascular problems.</li>
+        </ul>
+        <p><b>The good news:</b> Up to <b>80% of heart disease is preventable</b> with the right lifestyle choices. By managing stress, staying active, eating a balanced diet, and monitoring key health indicators like cholesterol and blood pressure, you can dramatically reduce your risk.</p>
+        <p><b>This platform is your first step</b>—helping you assess your risk and empowering you with knowledge to make heart-healthy decisions. Remember, your heart health is in your hands, no matter your age!</p>
+      </div>
+    </div>
+    <!-- Ways to Keep Your Heart Healthy Section -->
+    <div class="heart-tips">
+      <h2>Ways to Keep Your Heart Healthy</h2>
+      <div class="tip-item">
+        <h3>1. Stay Physically Active</h3>
+        <p>Engage in at least 30 minutes of moderate exercise daily—brisk walking, swimming, or cycling keeps your heart strong.</p>
+      </div>
+      <div class="tip-item">
+        <h3>2. Choose Heart‑Healthy Foods</h3>
+        <p>Opt for fruits, vegetables, whole grains, and healthy fats while limiting processed and high‑salt foods.</p>
+      </div>
+      <div class="tip-item">
+        <h3>3. Manage Stress Effectively</h3>
+        <p>
+          Stress hormones like cortisol and adrenaline can strain your heart when they stay elevated for too long. 
+          Practice relaxation techniques such as meditation, yoga, deep breathing exercises, or even a calming hobby like gardening or painting. 
+          Disconnect from your devices for a few minutes daily and spend time in nature or with loved ones.
+        </p>
+      </div>
+
+      <div class="tip-item">
+        <h3>4. Get Quality Sleep</h3>
+        <p>
+          Your heart needs rest, too! Adults should aim for 7–9 hours of sleep each night. 
+          Poor sleep can lead to higher blood pressure, increased stress levels, and weight gain—all risk factors for heart disease. 
+          Create a calming bedtime routine, avoid heavy meals or caffeine before bed, and keep a consistent sleep schedule.
+        </p>
+      </div>
+
+      <div class="tip-item">
+        <h3>5. Quit Smoking and Limit Alcohol</h3>
+        <p>
+          Smoking damages your heart and blood vessels almost immediately, while excessive alcohol can raise blood pressure and add empty calories. 
+          If you smoke, seek support to quit—it’s one of the most powerful gifts you can give your heart. 
+          Limit alcohol to moderate levels (up to one drink per day for women and two for men).
+        </p>
+      </div>
+
+      <div class="tip-item">
+        <h3>6. Get Regular Health Checkups</h3>
+        <p>
+          Don’t wait for symptoms to appear—get your blood pressure, cholesterol, and blood sugar levels checked regularly. 
+          Early detection of any irregularities can prevent serious problems later. 
+          Combine these checkups with tools like our prediction app to stay proactive about your health.
+        </p>
+      </div>
+
+      <p>
+        Remember, small, consistent habits build a healthier heart over time. Start today—your future self will thank you!
+      </p>
+    </div>
+    <div class="container" id="predictForm">
+        <h2><i class="fa-solid fa-heart-circle-bolt"></i> Check Your Heart Health</h2>
+        <div class="form-section-title">Personal Information</div>
+        <form>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="age">Age:</label>
+                    <input type="number" id="age" name="age" required min="1" max="120">
+                </div>
+                <div class="form-group">
+                    <label for="sex">Sex:</label>
+                    <select id="sex" name="sex" required>
+                        <option value="">Select</option>
+                        <option value="M">Male</option>
+                        <option value="F">Female</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="chestPainType">Chest Pain Type:</label>
+                    <select id="chestPainType" name="chestPainType" required>
+                        <option value="">Select</option>
+                        <option value="ATA">ATA</option>
+                        <option value="NAP">NAP</option>
+                        <option value="ASY">ASY</option>
+                        <option value="TA">TA</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="cholestrol">Cholestrol:</label>
+                    <input type="number" id="cholestrol" name="cholestrol" required min="0">
+                </div>
+                <div class="form-group">
+                    <label for="fastingBS">Fasting Blood Sugar (1 = Yes, 0 = No):</label>
+                    <select id="fastingBS" name="fastingBS" required>
+                        <option value="">Select</option>
+                        <option value="1">Yes</option>
+                        <option value="0">No</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="restingECG">Resting ECG:</label>
+                    <select id="restingECG" name="restingECG" required>
+                        <option value="">Select</option>
+                        <option value="Normal">Normal</option>
+                        <option value="ST">ST</option>
+                        <option value="LVH">LVH</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="exerciseAngina">Exercise Angina:</label>
+                    <select id="exerciseAngina" name="exerciseAngina" required>
+                        <option value="">Select</option>
+                        <option value="Y">Yes</option>
+                        <option value="N">No</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="oldpeak">Oldpeak (ST depression):</label>
+                    <input type="number" step="0.1" id="oldpeak" name="oldpeak" required min="0">
+                </div>
+                <div class="form-group">
+                    <label for="stSlope">ST Slope:</label>
+                    <select id="stSlope" name="stSlope" required>
+                        <option value="">Select</option>
+                        <option value="Up">Up</option>
+                        <option value="Flat">Flat</option>
+                        <option value="Down">Down</option>
+                    </select>
+                </div>
+            </div>
+            <button type="submit">Predict</button>
+        </form>
+        <div id="inputSummary"></div>
+        <div id="result"></div>
+    </div>
+
+    <div class="how-it-works" id="howitworks">
+      <div class="how-it-works-icon"><i class="fa-solid fa-brain"></i></div>
+      <h3>How It Works</h3>
+      <div class="howit-subsection">
+        <span class="howit-icon"><i class="fa-solid fa-robot"></i></span>
+        <div>
+          <div class="howit-title">Machine Learning (ML)</div>
+          <div class="howit-desc">Our system uses a trained machine learning model built on real‑world heart disease data. It evaluates your health details—such as age, cholesterol levels, chest pain type, and more— to estimate your risk of heart disease. The model is designed to uncover subtle patterns and insights that may not be easily recognized by humans.</div>
+        </div>
+      </div>
+      <div class="howit-subsection">
+        <span class="howit-icon"><i class="fa-solid fa-network-wired"></i></span>
+        <div>
+          <div class="howit-title">API (Application Programming Interface)</div>
+          <div class="howit-desc">When you submit your details, your information is securely sent to our backend server using an API. The API acts as a bridge between your browser and our machine learning model, ensuring your data is processed quickly and safely.</div>
+        </div>
+      </div>
+      <div class="howit-subsection">
+        <span class="howit-icon"><i class="fa-solid fa-brain"></i></span>
+        <div>
+          <div class="howit-title">Artificial Intelligence (AI)</div>
+          <div class="howit-desc">AI powers the decision-making process, allowing the system to provide instant, data-driven predictions. By leveraging AI, we can offer you a fast and personalized assessment of your heart health risk.</div>
+        </div>
+      </div>
+      <div style="margin-top:10px; color:#004080; font-size:1.01rem;"><b>Note:</b> This tool is for informational purposes only and does not replace professional medical advice.</div>
+    </div>
+
+    <div class="top-cardiologists" id="top-cardiologists">
+      <h3>Top Cardiologists in India</h3>
+      <div class="cardiologist-list">
+        <div class="cardiologist-card">
+          <div class="cardiologist-icon"><i class="fa-solid fa-user-doctor"></i></div>
+          <div class="cardiologist-name">Dr. Ashok Seth</div>
+          <div class="cardiologist-specialty">Interventional Cardiologist</div>
+          <div><b>Experience:</b> 38+ Years</div>
+          <div><b>Location:</b> New Delhi</div>
+          <div><b>Hospital:</b> Fortis Escorts Hospital, New Delhi</div>
+          <div class="cardiologist-desc">
+            Dr. Ashok Seth is one of India's most renowned and sought-after Interventional Cardiologists. He has performed over 50,000 angiograms and 20,000 angioplasties, and holds the LIMCA Book of Records for one of the highest numbers of these procedures in the world. He is a pioneer in several advanced cardiac techniques and has received the prestigious Padma Bhushan and Padma Shri awards.
+          </div>
+        </div>
+        <div class="cardiologist-card">
+          <div class="cardiologist-icon"><i class="fa-solid fa-user-doctor"></i></div>
+          <div class="cardiologist-name">Dr. T S Kler</div>
+          <div class="cardiologist-specialty">Interventional Cardiologist</div>
+          <div><b>Location:</b> (See Indicure site)</div>
+          <div class="cardiologist-desc">
+            Dr. T S Kler is a leading interventional cardiologist in India, known for his expertise in complex cardiac procedures and electrophysiology. He has contributed significantly to the advancement of cardiac care in India.
+          </div>
+        </div>
+        <div class="cardiologist-card">
+          <div class="cardiologist-icon"><i class="fa-solid fa-user-doctor"></i></div>
+          <div class="cardiologist-name">Dr. Mahesh Ghogare</div>
+          <div class="cardiologist-specialty">Interventional Cardiologist</div>
+          <div><b>Experience:</b> 15 Years</div>
+          <div><b>Location:</b> Mumbai</div>
+          <div><b>Hospital:</b> Apollo Hospital, Navi Mumbai</div>
+          <div class="cardiologist-desc">
+            Dr. Mahesh Ghogare is a renowned cardiologist with expertise in coronary angiographies and angioplasties, especially using the radial approach. He has performed over 3,500 angiographies and 500 angioplasties, and is skilled in pediatric cardiac interventions.
+          </div>
+        </div>
+        <div class="cardiologist-card">
+          <div class="cardiologist-icon"><i class="fa-solid fa-user-doctor"></i></div>
+          <div class="cardiologist-name">Dr. Sandeep Attawar</div>
+          <div class="cardiologist-specialty">Cardiac Surgeon</div>
+          <div><b>Experience:</b> 28+ Years</div>
+          <div><b>Location:</b> Chennai</div>
+          <div><b>Hospital:</b> Gleneagles Global Health City, Chennai</div>
+          <div class="cardiologist-desc">
+            Dr. Sandeep Attawar is a leading cardiac surgeon in India, known for his expertise in heart and lung transplants, as well as complex cardiac surgeries. He has performed numerous successful transplants and is recognized for his contributions to cardiac care.
+          </div>
+        </div>
+        <div class="cardiologist-card">
+          <div class="cardiologist-icon"><i class="fa-solid fa-user-doctor"></i></div>
+          <div class="cardiologist-name">Dr. Naresh Trehan</div>
+          <div class="cardiologist-specialty">Cardiovascular and Cardiothoracic Surgeon</div>
+          <div><b>Experience:</b> 40+ Years</div>
+          <div><b>Location:</b> Gurugram</div>
+          <div><b>Hospital:</b> Medanta - The Medicity, Gurugram</div>
+          <div class="cardiologist-desc">
+            Dr. Naresh Trehan is a world-renowned cardiovascular and cardiothoracic surgeon. He has received numerous awards for his work and is known for pioneering advanced cardiac surgical techniques in India.
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:24px; color:#004080; font-size:1.01rem;">
+        To contact these doctors or see the full list, visit <a href="https://www.indicure.com/best-cardiologist-india/" target="_blank" class="cardiologist-link">IndiCure: Best Cardiologist in India</a>.
+      </div>
+    </div>
+
+    <div class="about" id="about">
+        <h3>About Us</h3>
+        <p>
+            Welcome to the Heart Disease Prediction web app! Our mission is to empower individuals to take charge of their heart health by providing a quick and easy way to assess risk factors for heart disease. This tool uses machine learning to analyze your health data and provide a risk assessment. Please note: this tool is for informational purposes only and does not replace professional medical advice.
+        </p>
+    </div>
+
+    <div class="contact" id="contact">
+        <h3>Contact Us</h3>
+        <p style="text-align:center;">
+            <strong style="font-size:1.4rem; color:#222;">Priya Rawat</strong><br>
+            <em style="color:#555; font-size:1rem;">Developer &nbsp;|&nbsp; Data Science Enthusiast</em><br><br>
+            <a href="tel:9012126280" style="color:#d90429; text-decoration:none;">9012126280</a><br>
+            <a href="mailto:priyarawat2334@gmail.com" style="color:#d90429; text-decoration:none;">priyarawat2334@gmail.com</a><br>
+            <span style="display:block; margin-top:10px;">Have questions, feedback, or want to collaborate? Reach out to us or connect with us on social media below!</span>
+        </p>
+    </div>
+
+    <footer class="footer">
+        <div>Made with <i class="fa fa-heart" style="color:#ffd700;"></i> by Your Team</div>
+        <div class="social-icons">
+            <a href="https://github.com/Priya-611" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+            <a href="https://www.linkedin.com/in/priya-rawat-1ab45829a/" target="_blank" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+            <a href="https://www.instagram.com/?hl=en" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+        </div>
+    </footer>
+    </div>
+
+    <script>
+        function toggleSideMenu() {
+            const menu = document.getElementById('sideMenu');
+            const overlay = document.getElementById('sideMenuOverlay');
+            menu.classList.toggle('open');
+            overlay.classList.toggle('open');
+        }
+        function closeSideMenu() {
+            document.getElementById('sideMenu').classList.remove('open');
+            document.getElementById('sideMenuOverlay').classList.remove('open');
+        }
+        // Close menu on link click
+        document.querySelectorAll('.side-menu-link').forEach(link => {
+            link.addEventListener('click', () => {
+                closeSideMenu();
+            });
+        });
+        // Optional: Highlight active link in side menu
+        window.addEventListener('scroll', function() {
+            const sections = ['about-heart','predictForm','howitworks','top-cardiologists','about','contact'];
+            let scrollPos = window.scrollY + 100;
+            sections.forEach(id => {
+                const section = document.getElementById(id);
+                const link = document.querySelector(`.side-menu-link[href="#${id}"]`);
+                if (section && link) {
+                    if (scrollPos >= section.offsetTop && scrollPos < section.offsetTop + section.offsetHeight) {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                }
+            });
+        });
+
+        document.getElementById('predictForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const form = e.target;
+            const data = {
+                age: form.age.value,
+                sex: [form.sex.value],
+                chestPainType: [form.chestPainType.value],
+                cholestrol: form.cholestrol.value,
+                fastingBS: form.fastingBS.value,
+                restingECG: [form.restingECG.value],
+                exerciseAngina: [form.exerciseAngina.value],
+                oldpeak: form.oldpeak.value,
+                stSlope: [form.stSlope.value]
+            };
+
+            const resultDiv = document.getElementById('result');
+            const inputSummaryDiv = document.getElementById('inputSummary');
+            resultDiv.innerHTML = "<span style='color:#004080;'>Predicting...</span>";
+            inputSummaryDiv.innerHTML = "";
+
+            try {
+                const response = await fetch('/api/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                if (result.message !== undefined && result.prediction !== undefined) {
+                    // Show input summary
+                    const summaryHtml = `
+                        <div class='input-summary'>
+                            <div class='input-summary-title'>Your Input Values</div>
+                            <ul class='input-summary-list'>
+                                <li><b>Age:</b> ${data.age}</li>
+                                <li><b>Sex:</b> ${data.sex[0]}</li>
+                                <li><b>Chest Pain Type:</b> ${data.chestPainType[0]}</li>
+                                <li><b>Cholestrol:</b> ${data.cholestrol}</li>
+                                <li><b>Fasting Blood Sugar:</b> ${data.fastingBS}</li>
+                                <li><b>Resting ECG:</b> ${data.restingECG[0]}</li>
+                                <li><b>Exercise Angina:</b> ${data.exerciseAngina[0]}</li>
+                                <li><b>Oldpeak:</b> ${data.oldpeak}</li>
+                                <li><b>ST Slope:</b> ${data.stSlope[0]}</li>
+                            </ul>
+                        </div>
+                    `;
+                    inputSummaryDiv.innerHTML = summaryHtml;
+                    // Show prediction result in a card
+                    let iconHtml = '';
+                    let heading = 'Prediction Result';
+                    if (result.prediction == 1) {
+                        iconHtml = `<span class="icon sad-heart"><i class='fa-solid fa-heart-crack'></i></span>`;
+                    } else {
+                        iconHtml = `<span class="icon happy-heart"><i class='fa-solid fa-heart'></i></span>`;
+                    }
+                    resultDiv.innerHTML = `
+                        <div class='result-card'>
+                            <div class='result-card-heading'>${heading}</div>
+                            ${iconHtml}
+                            <div class='result-card-message'>${result.message}</div>
+                        </div>
+                    `;
+                    // Reset the form
+                    form.reset();
+                    // Scroll to result
+                    setTimeout(() => {
+                        document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 200);
+                } else if (result.error) {
+                    resultDiv.textContent = "Error: " + result.error;
+                } else {
+                    resultDiv.textContent = "Unexpected response from server.";
+                }
+            } catch (err) {
+                resultDiv.textContent = "Error: " + err.message;
+            }
+        });
+    </script>
+</body>
+</html>
