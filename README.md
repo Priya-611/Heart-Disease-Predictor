@@ -1,4 +1,4 @@
-# Heart Disease Prediction Web App
+# Heart Disease Risk Prediction Web App
 
 A machine learning-powered web application to predict the likelihood of heart disease based on user health indicators. This project combines a logistic regression model, a Flask backend, and an AI-generated frontend to deliver real-time predictions.
 
